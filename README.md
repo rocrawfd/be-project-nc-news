@@ -10,5 +10,6 @@ You may request the database names to be sent privately.
 ## Creating the Databases and Seeding Data<br>
 Use the scripts in the package.json file to help.<br>
 To drop and create the database:  ```npm run setup-dbs```<br>
-To seed the dev data: ```npm run seed```
+To seed the dev data: ```npm run seed```<br>
+
 
