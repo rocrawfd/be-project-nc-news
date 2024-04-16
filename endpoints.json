@@ -42,5 +42,19 @@
 
       }
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves up an array of comments posted to the requested article",
+    "queries": [],
+    "exampleResponse": {
+      "comments": {
+        "comment_id": 1,
+        "votes": 4,
+        "created_at": "2022-11-11-T11:11:11",
+        "article_id": 2,
+        "author": "user7",
+        "body": "Text from comment"
+      }
+    }
   }
 }
