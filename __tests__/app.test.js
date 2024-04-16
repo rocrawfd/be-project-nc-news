@@ -15,8 +15,9 @@ describe("GET /api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then(({ body }) => {
-        expect(body.topics.length).toBe(3);
-        body.topics.forEach((topic) => {
+        const topics = body.topics
+        expect(topics.length).toBe(3);
+        topics.forEach((topic) => {
           expect(topic).toEqual(
             expect.objectContaining({
               description: expect.any(String),
@@ -90,5 +91,29 @@ describe("GET /api/articles/:article_id", () => {
     })
   })
 });
+
+describe.only("GET api/articles", () => {
+  test("GET 200: should respond with a status code of 200 and an array of articles", () => {
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(( {body} ) => {
+      const articles = body.articles
+      expect(articles.length).toBe(13)
+      articles.forEach((article) => {
+        expect(article).toEqual(expect.objectContaining({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          created_at: expect.any(String), //maybe not string???
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(Number)
+        }))
+      })
+    })
+  })
+})
 
 

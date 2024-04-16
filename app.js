@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const {getEndpoints} = require("./controllers/get-endpoint-controller")
 const {getTopics} = require("./controllers/topics-controller")
-const {getArticleById} = require("./controllers/articles-controller")
+const {getArticleById, getArticles} = require("./controllers/articles-controller")
 
 // article 37 appears with \n, why?
 app.get("/api", getEndpoints)
@@ -10,6 +10,8 @@ app.get("/api", getEndpoints)
 app.get("/api/topics", getTopics)
 
 app.get("/api/articles/:article_id", getArticleById)
+
+app.get("/api/articles", getArticles)
 
 
 app.all('*', (req, res, next) => {
