@@ -15,41 +15,28 @@ exports.fetchArticleById = (articleId) => {
 };
 
 exports.fetchArticles = () => {
-  return db.query(`SELECT article_id FROM articles`)
+  return db
+    .query(
+      `SELECT articles.article_id, COUNT(*) FROM articles JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id`
+    )
     .then(({ rows }) => {
-      const ids = rows.map((row) => {
-        return row.article_id;
-      });
-      const count = [];
-      ids.forEach((id) => {
-        count.push(
-          db.query(`SELECT COUNT(*) FROM comments WHERE article_id = ${id}`)
-        );
-      });
-      return Promise.all([Promise.all(count), ids]);
+      const commentCounts = rows;
+      const articles = db.query(
+        `SELECT author, title, article_id, topic, created_at, votes, article_img_url FROM articles ORDER BY created_at DESC`
+      );
+      return Promise.all([articles, commentCounts]);
     })
     .then((promises) => {
-      const countRows = promises[0].map((promise) => {
-        return promise.rows[0].count;
-      });
-      return Promise.all([countRows, promises[1]]);
-    })
-    .then((promises) => {
-      const commentCounts = promises[0].flat();
-      const ids = promises[1];
-      const query = db.query(`SELECT article_id, title, topic, author, created_at, votes, article_img_url FROM articles ORDER BY created_at DESC`);
-      return Promise.all([query, ids, commentCounts]).then((promises) => {
-        const articles = promises[0].rows;
-        const ids = promises[1];
-        const commentCount = promises[2];
-        ids.forEach((id, idIndex) => {
-          articles.forEach((article) => {
-            if (article.article_id === id) {
-              article.comment_count = Number(commentCount[idIndex]);
-            }
-          });
+      const articles = promises[0].rows;
+      const commentCount = promises[1];
+      articles.forEach((article) => {
+        article.comment_count = 0;
+        commentCount.forEach((count) => {
+          if (article.article_id === count.article_id) {
+            article.comment_count = Number(count.count);
+          }
         });
-        return articles;
       });
+      return articles;
     });
 };
