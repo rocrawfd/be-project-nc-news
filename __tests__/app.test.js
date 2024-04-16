@@ -181,4 +181,60 @@ describe("GET api/articles/:article_id/comments", () => {
   })
 })
 
-
+describe("POST /api/articles/:article_id/comments", () => {
+  test("POST 201: should create a new comment linked to the requested article, and respond with an object containing the posted comment", () => {
+    const newComment = {username: "butter_bridge", body: "this article saved my marriage!"}
+        return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(201)
+        .then(( {body} ) => {
+          const {comment} = body
+          expect(comment).toEqual(expect.objectContaining({
+            comment_id: expect.any(Number),
+            body: expect.any(String),
+            author: expect.any(String),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            article_id: expect.any(Number)}))
+        })
+  })
+  test("POST 404: when input an valid, but non-existent id, should respond with an error of '404 - Not Found", () => {
+    const newComment = {username: "butter_bridge", body: "this article saved my marriage!"}
+    return request(app)
+    .post("/api/articles/9999/comments")
+    .send(newComment)
+    .expect(404)
+    .then(( {body} ) => {
+      expect(body.msg).toBe('404 - Not Found')
+    })
+  })
+  test("POST 400: when input an invalid id, should return with a message of '400 - Bad Request'", () => {
+    const newComment = {username: "butter_bridge", body: "this article saved my marriage!"}
+    return request(app)
+    .post("/api/articles/article-eight/comments")
+    .send(newComment)
+    .expect(400)
+    .then(( {body} ) => {
+      expect(body.msg).toBe('400 - Bad Request')
+    })
+  })
+  test("POST 400: when attempting to post using an invalid data structure, should respond with '400 - Bad Request'", () => {
+    const newComment = {user: "butter_bridge", comment: "this article saved my marriage!"}
+    return request(app)
+    .post("/api/articles/3/comments")
+    .send(newComment)
+    .then(( {body} ) => {
+      expect(body.msg).toBe('400 - Bad Request')
+    })
+  })
+  test("POST 404: when passed a username that is not found in the user database, should return '404 - Not Found'", () => {
+    const newComment = {username: "robbiedobbie", body: "sneaky"}
+    return request(app)
+    .post("/api/articles/4/comments")
+    .send(newComment)
+    .then(( {body} ) => {
+      expect(body.msg).toBe('404 - Not Found')
+    })
+  })
+})
