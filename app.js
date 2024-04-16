@@ -23,7 +23,6 @@ app.all('*', (req, res, next) => {
 
 app.use((err, req, res, next) => {
 if(err.code === '22P02'){res.status(400).send({msg: '400 - Bad Request'})}
-console.log(err, 'app.js err')
 res.status(err.status).send({msg: err.msg})
 })
 
