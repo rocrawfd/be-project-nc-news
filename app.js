@@ -5,10 +5,11 @@ const {getEndpoints} = require("./controllers/get-endpoint-controller")
 // article 37 appears with \n, why?
 const articlesRoute = require("./routers/articles-router")
 const topicsRouter = require("./routers/topics-router")
+
 app.use(express.json())
+
 app.use('/api/articles', articlesRoute)
 app.use('/api/topics', topicsRouter)
-
 
 app.get("/api", getEndpoints)
 
