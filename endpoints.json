@@ -50,11 +50,27 @@
       "comments": {
         "comment_id": 1,
         "votes": 4,
-        "created_at": "2022-11-11-T11:11:11",
+        "created_at": "String of date and time created",
         "article_id": 2,
         "author": "user7",
         "body": "Text from comment"
       }
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a new comment into the comments table, responds with an object of the new comment",
+    "queries": [],
+    "exampleRequest": {
+      "username": "butter_bridge", 
+      "body": "Comment text"
+    },
+    "exampleResponse": {
+      "comment_id": 1,
+      "body": "Comment Text",
+      "author": "butter_bridge",
+      "votes": 0,
+      "created_at": "String of date and time of post creation",
+      "article_id": 1
     }
   }
 }
