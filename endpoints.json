@@ -72,5 +72,9 @@
       "created_at": "String of date and time of post creation",
       "article_id": 1
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes the specified comment and responds only with a 204 status code", 
+    "queries": []
   }
 }

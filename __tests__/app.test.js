@@ -79,7 +79,7 @@ describe("GET /api/articles/:article_id", () => {
     .get("/api/articles/999")
     .expect(404)
     .then(( {body} ) => {
-        expect(body.msg).toBe('404 - Not Found')
+        expect(body.msg).toBe('404 - Article Not Found')
     })
   })
   test("GET 400: should respond with '400 - Bad Request' when passed an invalid id number", () => {
@@ -160,7 +160,7 @@ describe("GET api/articles/:article_id/comments", () => {
     .get("/api/articles/9999/comments")
     .expect(404)
     .then(( {body} ) => {
-      expect(body.msg).toBe('404 - Not Found')
+      expect(body.msg).toBe('404 - Article Not Found')
     })
   })
   test("GET 400: when input an invalid id, should respond with '400 - Bad Request", () => {
@@ -267,7 +267,7 @@ describe("PATCH /api/articles/:article_id", () => {
     .send(voteChanger)
     .expect(404)
     .then(({body}) => {
-      expect(body.msg).toBe('404 - Not Found')
+      expect(body.msg).toBe('404 - Article Not Found')
     })
   })
   test("PATCH 400: when given an invalid article id, should respond with '400 - Bad Request'", () => {
@@ -297,6 +297,30 @@ describe("PATCH /api/articles/:article_id", () => {
     .send(voteChanger)
     .expect(400)
     .then(( {body} ) => {
+      expect(body.msg).toBe('400 - Bad Request')
+    })
+  })
+})
+
+describe("DELETE /api/comments/comment_id", () => {
+  test("DELETE 204: should respond with a status code of 204", () => {
+    return request(app)
+    .delete("/api/comments/1")
+    .expect(204)
+  })
+  test("DELETE 404: when trying to delete using a valid, but non-existent id, should respond with '404 - Comment Not Found'", () => {
+    return request(app)
+    .delete("/api/comments/9999")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('404 - Comment Not Found')
+    })
+  })
+  test("DELETE 400: when trying to delete using an invalid id, should respond with '400 - Bad Request'", () => {
+    return request(app)
+    .delete("/api/comments/comment-twelve")
+    .expect(400)
+    .then(({body}) => {
       expect(body.msg).toBe('400 - Bad Request')
     })
   })
