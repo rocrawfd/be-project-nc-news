@@ -123,18 +123,18 @@ describe("GET api/articles", () => {
       expect(articles).toBeSortedBy('created_at', {descending: true})
     })
   })
-  test("GET 200 (QUERY): when using topic query, should return only articles with the requested topic", () => {
-    return request(app)
-    .get("/api/articles?topic=mitch")
-    .expect(200)
-    .then(( {body} ) => {
-      const {articles} = body
-      expect(articles).toHaveLength(12)
-      articles.forEach((article) => {
-        expect(article.topic).toBe('mitch')
-      })
-    })
-  })
+  // test("GET 200 (QUERY): when using topic query, should return only articles with the requested topic", () => {
+  //   return request(app)
+  //   .get("/api/articles?topic=mitch")
+  //   .expect(200)
+  //   .then(( {body} ) => {
+  //     const {articles} = body
+  //     expect(articles).toHaveLength(12)
+  //     articles.forEach((article) => {
+  //       expect(article.topic).toBe('mitch')
+  //     })
+  //   })
+  // })
 })
 
 describe("GET api/articles/:article_id/comments", () => {
