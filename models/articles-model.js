@@ -1,15 +1,9 @@
 const db = require("../db/connection");
+const { doesArticleExist } = require("../utils");
 
 exports.fetchArticleById = (articleId) => {
-  return db
-    .query(`SELECT * FROM articles WHERE article_id = $1;`, [articleId])
+  return db.query(`SELECT * FROM articles WHERE article_id = $1;`, [articleId])
     .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "404 - Not Found",
-        });
-      }
       return rows[0];
     });
 };
@@ -40,3 +34,10 @@ exports.fetchArticles = () => {
       return articles;
     });
 };
+
+exports.updateArticle = (votesInc, articleId) => {
+  return db.query(`UPDATE articles SET votes=VOTES + $1 WHERE article_id=$2 RETURNING *`, [votesInc, articleId])
+  .then(({rows}) => {
+    return rows[0]
+  })
+}

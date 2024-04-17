@@ -239,4 +239,65 @@ describe("POST /api/articles/:article_id/comments", () => {
   })
 })
 
-
+describe("PATCH /api/articles/:article_id", () => {
+  test("PATCH 200: should increment the number of votes an article has by the specified amount, and respond with the patched article", () => {
+    const voteChanger = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/2")
+      .send(voteChanger)
+      .expect(200)
+      .then(({ body }) => {
+        const {article} = body
+        expect(article).toEqual(expect.objectContaining({
+          article_id: 2,
+          title: "Sony Vaio; or, The Laptop",
+          topic: "mitch", 
+          author: "icellusedkars",
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: 10,
+          article_img_url: expect.any(String)
+        }))
+      })
+  })
+  test("PATCH 404: when given a valid, but non-existent, article id, should respond with '404 - Not Found'", () => {
+    const voteChanger = { inc_votes: 10 };
+    return request(app)
+    .patch("/api/articles/9999")
+    .send(voteChanger)
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('404 - Not Found')
+    })
+  })
+  test("PATCH 400: when given an invalid article id, should respond with '400 - Bad Request'", () => {
+    const voteChanger = { inc_votes: 10 };
+    return request(app)
+    .patch("/api/articles/article-one")
+    .send(voteChanger)
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe('400 - Bad Request')
+    })
+  })
+  test("PATCH 400: when trying to patch using an invalid data type, should return '400 - Bad Request", () => {
+    const voteChanger = { inc_votes:  "ten"}
+    return request(app)
+    .patch("/api/articles/2")
+    .send(voteChanger)
+    .expect(400)
+    .then(( {body} ) => {
+      expect(body.msg).toBe('400 - Bad Request')
+    })
+  })
+  test("PATCH 400: when trying to patch using an invalid key, should return '400 - Bad Request", () => {
+    const voteChanger = { votesGoUpBy:  10}
+    return request(app)
+    .patch("/api/articles/2")
+    .send(voteChanger)
+    .expect(400)
+    .then(( {body} ) => {
+      expect(body.msg).toBe('400 - Bad Request')
+    })
+  })
+})
