@@ -3,16 +3,14 @@ const {
   fetchArticles,
   updateArticle,
 } = require("../models/articles-model");
-const { doesArticleExist } = require("../utils");
+const { checkTopicExists } = require("../utils");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  doesArticleExist(article_id)
-    .then(() => {
-      return fetchArticleById(article_id).then((article) => {
+      return fetchArticleById(article_id)
+      .then((article) => {
         res.status(200).send({ article });
-      });
-    })
+      })
     .catch((err) => {
       next(err);
     });
@@ -20,22 +18,36 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getArticles = (req, res, next) => {
   const {topic} = req.query
-  return fetchArticles(topic)
-  .then((articles) => {
-    res.status(200).send({ articles });
-  });
+  if(topic === undefined){
+    return fetchArticles(topic)
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+  .catch((err) => {
+    next(err)
+  })
+  }else{
+    console.log(topic, 'else block')
+    return checkTopicExists(topic)
+    .then(() => {
+      return fetchArticles(topic)
+      .then((articles) => {
+        res.status(200).send({articles})
+      })
+    })
+    .catch((err) => {
+      next(err)
+    })
+  }
 };
 
 exports.patchArticle = (req, res, next) => {
   const votes = req.body.inc_votes;
   const articleId = req.params.article_id;
-  doesArticleExist(articleId)
-  .then(() => {
     return updateArticle(votes, articleId)
       .then((article) => {
         res.status(200).send({ article });
       })
-  })
     .catch((err) => {
       next(err);
     });

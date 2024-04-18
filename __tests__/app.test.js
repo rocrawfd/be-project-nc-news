@@ -79,7 +79,7 @@ describe("GET /api/articles/:article_id", () => {
     .get("/api/articles/999")
     .expect(404)
     .then(( {body} ) => {
-        expect(body.msg).toBe('404 - Article Not Found')
+        expect(body.msg).toBe('404 - Not Found')
     })
   })
   test("GET 400: should respond with '400 - Bad Request' when passed an invalid id number", () => {
@@ -123,18 +123,43 @@ describe("GET api/articles", () => {
       expect(articles).toBeSortedBy('created_at', {descending: true})
     })
   })
-  // test("GET 200 (QUERY): when using topic query, should return only articles with the requested topic", () => {
-  //   return request(app)
-  //   .get("/api/articles?topic=mitch")
-  //   .expect(200)
-  //   .then(( {body} ) => {
-  //     const {articles} = body
-  //     expect(articles).toHaveLength(12)
-  //     articles.forEach((article) => {
-  //       expect(article.topic).toBe('mitch')
-  //     })
-  //   })
-  // })
+  test("GET 200 (QUERY): when using topic query, should return only articles with the requested topic", () => {
+    return request(app)
+    .get("/api/articles?topic=mitch")
+    .expect(200)
+    .then(( {body} ) => {
+      const {articles} = body
+      expect(articles).toHaveLength(12)
+      articles.forEach((article) => {
+        expect(article.topic).toBe('mitch')
+      })
+    })
+  })
+  test("GET 200 (QUERY): when using topic query, if passed a topic that exists in the topics table, but has no articles, should return an empty array", () => {
+    return request(app)
+    .get("/api/articles?topic=paper")
+    .expect(200)
+    .then(( {body} ) => {
+      const {articles} = body
+      expect(articles).toHaveLength(0)
+    })
+  })
+  test("GET 400 (QUERY): if passed an invalid query, should '400 - Bad Request'", () => {
+    return request(app)
+    .get("/api/articles?topic=24")
+    .expect(400)
+    .then(( {body} ) => {
+      expect(body.msg).toBe('400 - Bad Request')
+    })
+  })
+  test("GET 404 (QUERY): when passed a valid, but non existent query, should return '404 - Not Found'", () => {
+    return request(app)
+    .get("/api/articles?topic=cheese")
+    .expect(404)
+    .then(( {body} ) => {
+      expect(body.msg).toBe('404 - Not Found')
+    })
+  })
 })
 
 describe("GET api/articles/:article_id/comments", () => {
@@ -171,7 +196,7 @@ describe("GET api/articles/:article_id/comments", () => {
     .get("/api/articles/9999/comments")
     .expect(404)
     .then(( {body} ) => {
-      expect(body.msg).toBe('404 - Article Not Found')
+      expect(body.msg).toBe('404 - Not Found')
     })
   })
   test("GET 400: when input an invalid id, should respond with '400 - Bad Request", () => {
@@ -278,7 +303,7 @@ describe("PATCH /api/articles/:article_id", () => {
     .send(voteChanger)
     .expect(404)
     .then(({body}) => {
-      expect(body.msg).toBe('404 - Article Not Found')
+      expect(body.msg).toBe('404 - Not Found')
     })
   })
   test("PATCH 400: when given an invalid article id, should respond with '400 - Bad Request'", () => {
@@ -319,12 +344,12 @@ describe("DELETE /api/comments/comment_id", () => {
     .delete("/api/comments/1")
     .expect(204)
   })
-  test("DELETE 404: when trying to delete using a valid, but non-existent id, should respond with '404 - Comment Not Found'", () => {
+  test("DELETE 404: when trying to delete using a valid, but non-existent id, should respond with '404 - Not Found'", () => {
     return request(app)
     .delete("/api/comments/9999")
     .expect(404)
     .then(({body}) => {
-      expect(body.msg).toBe('404 - Comment Not Found')
+      expect(body.msg).toBe('404 - Not Found')
     })
   })
   test("DELETE 400: when trying to delete using an invalid id, should respond with '400 - Bad Request'", () => {
