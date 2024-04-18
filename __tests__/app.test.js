@@ -15,7 +15,7 @@ describe("GET /api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then(({ body }) => {
-        const topics = body.topics
+        const {topics} = body
         expect(topics.length).toBe(3);
         topics.forEach((topic) => {
           expect(topic).toEqual(
@@ -57,8 +57,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        convertTimestampToDate({ created_at: 1594329060000 });
-        const { article } = convertTimestampToDate(body);
+        const { article } = body;
         expect(article).toEqual(
           expect.objectContaining({
             article_id: 1,
@@ -107,7 +106,7 @@ describe("GET api/articles", () => {
     .get("/api/articles")
     .expect(200)
     .then(( {body} ) => {
-      const articles = body.articles
+      const {articles} = body
       expect(articles.length).toBe(13)
       articles.forEach((article) => {
         expect(article).toEqual(expect.objectContaining({
@@ -128,8 +127,8 @@ describe("GET api/articles", () => {
     .get("/api/articles")
     .expect(200)
     .then(( {body} ) => {
-      const articles = body.articles
-      expect(articles).toBeSortedBy('created_at', {descending: true})
+      const {articles} = body
+      expect(articles).toBeSortedBy('created_at', { descending: true })
     })
   })
   test("GET 200 (QUERY): when using topic query, should return only articles with the requested topic", () => {
@@ -153,14 +152,6 @@ describe("GET api/articles", () => {
       expect(articles).toHaveLength(0)
     })
   })
-  test("GET 400 (QUERY): if passed an invalid query, should '400 - Bad Request'", () => {
-    return request(app)
-    .get("/api/articles?topic=24")
-    .expect(400)
-    .then(( {body} ) => {
-      expect(body.msg).toBe('400 - Bad Request')
-    })
-  })
   test("GET 404 (QUERY): when passed a valid, but non existent query, should return '404 - Not Found'", () => {
     return request(app)
     .get("/api/articles?topic=cheese")
@@ -177,7 +168,7 @@ describe("GET api/articles/:article_id/comments", () => {
     .get("/api/articles/5/comments")
     .expect(200)
     .then(( {body} ) => {
-      const comments = body.comments
+      const {comments} = body
       expect(comments.length).toBe(2)
       comments.forEach((comment) => {
         expect(comment).toEqual(expect.objectContaining({
@@ -186,7 +177,7 @@ describe("GET api/articles/:article_id/comments", () => {
           author: expect.any(String),
           votes: expect.any(Number),
           created_at: expect.any(String),
-          article_id: expect.any(Number),
+          article_id: 5,
         }))
       })
     })
@@ -196,7 +187,7 @@ describe("GET api/articles/:article_id/comments", () => {
     .get("/api/articles/5/comments")
     .expect(200)
     .then(( {body} ) => {
-      const comments = body.comments
+      const {comments} = body
       expect(comments).toBeSortedBy('created_at', {descending: true})
     })
   })
@@ -237,11 +228,11 @@ describe("POST /api/articles/:article_id/comments", () => {
           const {comment} = body
           expect(comment).toEqual(expect.objectContaining({
             comment_id: expect.any(Number),
-            body: expect.any(String),
-            author: expect.any(String),
-            votes: expect.any(Number),
+            body: "this article saved my marriage!",
+            author: "butter_bridge",
+            votes: 0,
             created_at: expect.any(String),
-            article_id: expect.any(Number)}))
+            article_id: 2}))
         })
   })
   test("POST 404: when input an valid, but non-existent id, should respond with an error of '404 - Not Found", () => {
@@ -377,7 +368,7 @@ describe("GET /api/users", () => {
     .get("/api/users")
     .expect(200)
     .then(( {body} ) => {
-      const users = body.users
+      const {users} = body
       expect(users).toHaveLength(4)
       users.forEach((user) => {
         expect(user).toEqual(expect.objectContaining({

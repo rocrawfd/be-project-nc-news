@@ -2,10 +2,10 @@ const {fetchCommentsByArticleId, insertComment, removeComment } = require("../mo
 const { doesArticleExist, doesCommentExist } = require("../utils.js")
 
 exports.getCommentsByArticleId = (req, res, next) => {
-    const articleId = req.params.article_id
-    doesArticleExist(articleId)
+    const {article_id} = req.params
+    doesArticleExist(article_id)
     .then(() => {
-        fetchCommentsByArticleId(articleId)
+        fetchCommentsByArticleId(article_id)
         .then((comments) => {
             return res.status(200).send({comments})
         })
@@ -17,8 +17,8 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
 exports.postComment = (req, res, next) => {
     const comment = req.body
-    const articleId = req.params.article_id
-    return insertComment(comment, articleId)
+    const {article_id} = req.params
+    return insertComment(comment, article_id)
     .then(( comment ) => {
         res.status(201).send({comment})
     })
@@ -28,10 +28,10 @@ exports.postComment = (req, res, next) => {
 }
 
 exports.deleteCommentById = (req, res, next) => {
-    const commentId = req.params.comment_id
-    doesCommentExist(commentId)
+    const {comment_id} = req.params
+    doesCommentExist(comment_id)
     .then(() => {
-        return removeComment(commentId)
+        return removeComment(comment_id)
         .then(() => {
             res.status(204).send({msg:`Comment has been deleted`})
         })
