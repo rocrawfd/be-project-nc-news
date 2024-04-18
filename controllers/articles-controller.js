@@ -27,7 +27,6 @@ exports.getArticles = (req, res, next) => {
     next(err)
   })
   }else{
-    console.log(topic, 'else block')
     return checkTopicExists(topic)
     .then(() => {
       return fetchArticles(topic)
