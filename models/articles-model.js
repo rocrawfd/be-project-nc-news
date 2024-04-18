@@ -4,13 +4,12 @@ const { doesArticleExist, checkExists } = require("../utils");
 exports.fetchArticleById = (articleId) => {
   return checkExists('articles', 'article_id', articleId)
   .then(() => {
-    return db.query(`SELECT * FROM articles WHERE article_id = $1;`, [articleId])
+    return db.query(`SELECT articles.*, COUNT(comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;`, [articleId])
       .then(({ rows }) => {
         return rows[0];
       });
   })
 };
-
 
 
 exports.fetchArticles = (topic) => {

@@ -90,6 +90,15 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.msg).toBe('400 - Bad Request')
     })
   })
+  test("GET 200 (FEATURE REQUEST): should now also return the comment count", () => {
+    return request(app)
+    .get("/api/articles/1")
+    .expect(200)
+    .then(({body}) => {
+      const {article} =  body
+      expect(article.comment_count).toBe(11)
+    })
+  })
 });
 
 describe("GET api/articles", () => {
