@@ -1,8 +1,4 @@
-const {
-  fetchArticleById,
-  fetchArticles,
-  updateArticle,
-} = require("../models/articles-model");
+const { fetchArticleById, fetchArticles, updateArticle } = require("../models/articles-model");
 const { checkTopicExists } = require("../utils");
 
 exports.getArticleById = (req, res, next) => {
@@ -15,6 +11,7 @@ exports.getArticleById = (req, res, next) => {
       next(err);
     });
 };
+
 
 exports.getArticles = (req, res, next) => {
   const {topic} = req.query
@@ -40,10 +37,11 @@ exports.getArticles = (req, res, next) => {
   }
 };
 
+
 exports.patchArticle = (req, res, next) => {
-  const votes = req.body.inc_votes;
-  const articleId = req.params.article_id;
-    return updateArticle(votes, articleId)
+  const {inc_votes} = req.body
+  const {article_id} = req.params;
+    return updateArticle(inc_votes, article_id)
       .then((article) => {
         res.status(200).send({ article });
       })
