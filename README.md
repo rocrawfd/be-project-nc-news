@@ -26,5 +26,6 @@ You may request the database names to be sent privately.
 
 
 ## Node & Postgres
+Minimum versions: <br>
 Node.js: **v21.6.1**<br>
 Postgres: **15.6**
