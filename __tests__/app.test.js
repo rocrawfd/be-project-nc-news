@@ -160,15 +160,45 @@ describe("GET api/articles", () => {
       expect(body.msg).toBe('404 - Not Found')
     })
   })
-  // test("GET 200: (FEATURE REQUEST): when passed a sort by query, should sort articles accordingly", () => {
-  //   return request(app)
-  //   .get("/api/articles?sort_by=topic")
-  //   .expect(200)
-  //   .then(( {body} ) => {
-  //     const {articles} = body
-  //     expect(articles).toBeSortedBy('topic', {descending: true})
-  //   })
-  // })
+  test("GET 200: (FEATURE REQUEST): when passed a sort by query, should sort articles accordingly", () => {
+    return request(app)
+    .get("/api/articles?sort_by=topic")
+    .expect(200)
+    .then(( {body} ) => {
+      const {articles} = body
+      expect(articles).toBeSortedBy('topic', {descending: true})
+    })
+  })
+  test("GET 404: (FEATURE REQUEST): when passed a sort by query with a key that does not exist, should return '404 - Not Found'", () => {
+    return request(app)
+    .get("/api/articles?sort_by=date")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('404 - Not Found')
+    })
+  })
+  test("GET 200: (FEATURE REQUEST): when passed an order query, should return articles in the requested order", () => {
+    return request(app)
+    .get("/api/articles?order=asc")
+    .expect(200)
+    .then(({body}) => {
+      const {articles} = body
+      expect(articles).toBeSortedBy('created_at')
+    })
+  })
+  test("GET 200: queries should be able to work together", () => {
+    return request(app)
+    .get("/api/articles?topic=mitch&sort_by=comment_count&order=asc")
+    .expect(200)
+    .then(({body}) => {
+      const {articles} = body
+      expect(articles).toBeSortedBy('comment_count')
+      expect(articles).toHaveLength(12)
+      articles.forEach((article) => {
+        expect(article.topic).toBe('mitch')
+      })
+    })
+  })
 })
 
 describe("GET api/articles/:article_id/comments", () => {
