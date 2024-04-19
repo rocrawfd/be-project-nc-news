@@ -1,9 +1,9 @@
 # Northcoders News API
 
 ## Introduction
-This is a backend api project containing a database of 4 linked tables. Users can write news **articles** about several **topics** and can leave **comments** underneath.<br>
+This is a backend api project containing a database of 4 linked tables. **Users** can write news **articles** about several **topics** and can leave **comments** underneath.<br>
 The hosted version can be found online here: <br>
-https://northcoders-news-app-ei5k.onrender.com/<br>
+https://northcoders-news-app-ei5k.onrender.com/api<br>
 A list of all available endpoints, and their behaviours, can be found in the endpoints.json file
 
 ## Setting Up

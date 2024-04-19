@@ -46,20 +46,3 @@ exports.checkExists = (table, column, value) => {
         }
     })
 }
-
-   
-exports.checkTopicExists = (topic) => {
-    if(/\d/g.test(topic)){
-        return Promise.reject({
-            status: 400, msg: '400 - Bad Request'
-        })
-    }
-    return db.query(`SELECT * FROM topics WHERE slug = $1`, [topic])
-    .then(({rows}) => {
-        if(rows.length === 0){
-            return Promise.reject({
-                status: 404, msg: '404 - Not Found'
-            })
-        }
-    })
-}
