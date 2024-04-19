@@ -152,7 +152,7 @@ describe("GET api/articles", () => {
       expect(articles).toHaveLength(0)
     })
   })
-  test("GET 404 (QUERY): when passed a valid, but non existent query, should return '404 - Not Found'", () => {
+  test("GET 404 (QUERY): when passed a valid, but non existent topic query, should return '404 - Not Found'", () => {
     return request(app)
     .get("/api/articles?topic=cheese")
     .expect(404)
@@ -160,6 +160,15 @@ describe("GET api/articles", () => {
       expect(body.msg).toBe('404 - Not Found')
     })
   })
+  // test("GET 200: (FEATURE REQUEST): when passed a sort by query, should sort articles accordingly", () => {
+  //   return request(app)
+  //   .get("/api/articles?sort_by=topic")
+  //   .expect(200)
+  //   .then(( {body} ) => {
+  //     const {articles} = body
+  //     expect(articles).toBeSortedBy('topic', {descending: true})
+  //   })
+  // })
 })
 
 describe("GET api/articles/:article_id/comments", () => {
