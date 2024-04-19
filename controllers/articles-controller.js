@@ -1,5 +1,5 @@
 const { fetchArticleById, fetchArticles, updateArticle } = require("../models/articles-model");
-const { checkTopicExists, checkExists } = require("../utils");
+const { checkExists } = require("../utils");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
