@@ -420,3 +420,28 @@ describe("GET /api/users", () => {
   })
 })
 
+
+describe("GET /api/users/:username", () => {
+  test("GET 200: should respond with a status code of 200 and an object containing the requested user", () => {
+    return request(app)
+    .get("/api/users/butter_bridge")
+    .expect(200)
+    .then(({body}) => {
+      const {user} = body
+      expect(user).toEqual(expect.objectContaining({
+        username: 'butter_bridge',
+        name: 'jonny',
+        avatar_url: 'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+      }))
+    })
+  })
+  test("GET 404: when passed a valid but non-existent username, should return 404", () => {
+    return request(app)
+    .get("/api/users/robbiedobbie")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('404 - Not Found')
+    })
+  })
+})
+

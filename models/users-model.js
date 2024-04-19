@@ -1,8 +1,19 @@
-const db = require("../db/connection")
+const db = require("../db/connection");
+const {checkExists} = require("../utils")
 
 exports.fetchUsers = () => {
-    return db.query(`SELECT * FROM users`)
-    .then(({rows}) => {
-        return rows
-    })
-}
+  return db.query(`SELECT * FROM users`).then(({ rows }) => {
+    return rows;
+  });
+};
+
+exports.fetchUserByUsername = (username) => {
+  return checkExists("users", "username", username)
+  .then(() => {
+    return db.query("SELECT * FROM users WHERE username = $1", [username])
+      .then(({ rows }) => {
+        console.log(rows[0])
+        return rows[0];
+      });
+  });
+};
