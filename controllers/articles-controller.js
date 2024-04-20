@@ -1,4 +1,4 @@
-const { fetchArticleById, fetchArticles, updateArticle } = require("../models/articles-model");
+const { fetchArticleById, fetchArticles, updateArticle, insertArticle } = require("../models/articles-model");
 const { checkExists } = require("../utils");
 
 exports.getArticleById = (req, res, next) => {
@@ -11,8 +11,6 @@ exports.getArticleById = (req, res, next) => {
       next(err);
     });
 };
-
-
 
 
 exports.patchArticle = (req, res, next) => {
@@ -43,3 +41,16 @@ exports.patchArticle = (req, res, next) => {
         next(err)
       })
     };
+
+
+    exports.postArticle = (req, res, next) => {
+      const article = req.body
+      return insertArticle(article)
+      .then((article) => {
+        res.status(201).send({article})
+      })
+      .catch((err) => {
+        console.log(err)
+        next(err)
+      })
+    }

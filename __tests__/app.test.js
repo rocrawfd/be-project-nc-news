@@ -530,3 +530,64 @@ describe("PATCH /api/comments/:comment_id", () => {
     })
   })
 });
+
+describe("POST /api/articles", () => {
+  test("POST 201: responds with the updated article and a status code of 201", () => {
+    const newArticle = {
+      author: "butter_bridge", 
+      title: "Dunder Mifflin might go bust",
+      body: "With the rise of the Michael Scott Paper Company, Dunder Mufflin may be on its last legs. How the turntables...",
+      topic: 'paper',
+      article_img_url: "https://i.pinimg.com/originals/0e/ea/0e/0eea0ecff537de13628d7a065a535bc9.jpg"
+    }
+    return request(app)
+    .post("/api/articles")
+    .send(newArticle)
+    .expect(201)
+    .then(( {body} ) => {
+      const {article} = body
+      expect(article).toEqual(expect.objectContaining({
+        article_id: 14,
+        title: "Dunder Mifflin might go bust",
+        author: "butter_bridge",
+        topic: 'paper',
+        body: "With the rise of the Michael Scott Paper Company, Dunder Mufflin may be on its last legs. How the turntables...",
+        created_at: expect.any(String),
+        article_img_url: "https://i.pinimg.com/originals/0e/ea/0e/0eea0ecff537de13628d7a065a535bc9.jpg",
+        votes: 0,
+        comment_count: 0
+      }))
+    })
+  })
+  test("POST 404: when passed a topic or user that does not exist, should return '404 - Not Found'", () => {
+    const newArticle = {
+      author: "whovian123", 
+      title: "Why David Tennant is the greatest Doctor Who",
+      body: "There is no denying David Tennant is a handsome man, a great actor and ,to many of a certain generation, the greatest Doctor of all time. But why? Is it his cheeky smile? His charming persona? His beautiful hair? The answer... is yes.",
+      topic: 'doctor who',
+      article_img_url: "https://www.bigissue.com/wp-content/uploads/2017/01/david-tennant_hero-pic.jpg"
+    }
+    return request(app)
+    .post("/api/articles")
+    .send(newArticle)
+    .expect(404)
+    .then(( {body} ) => {
+      expect(body.msg).toEqual('404 - Not Found')
+    })
+  })
+  test("POST 400: when passed invalid data, should return '400 - Bad Request'", () => {
+    const newArticle = [{
+      author: "butter_bridge", 
+      body: "There is no denying David Tennant is a handsome man, a great actor and ,to many of a certain generation, the greatest Doctor of all time. But why? Is it his cheeky smile? His charming persona? His beautiful hair? The answer... is yes.",
+      topic: 'paper',
+      article_img_url: "https://www.bigissue.com/wp-content/uploads/2017/01/david-tennant_hero-pic.jpg"
+    }]
+    return request(app)
+    .post("/api/articles")
+    .send(newArticle)
+    .expect(400)
+    .then(( {body} ) => {
+      expect(body.msg).toEqual('400 - Bad Request')
+    })
+  })
+})
