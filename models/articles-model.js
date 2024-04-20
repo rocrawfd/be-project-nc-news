@@ -45,3 +45,20 @@ exports.fetchArticles = (topic, sortBy='created_at', order='desc') => {
     return rows;
   });
 };
+
+
+exports.insertArticle = (article) => {
+  return db.query(`
+  INSERT INTO articles (title, author, topic, body, article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING *`, [article.title, article.author, article.topic, article.body, article.article_img_url])
+  .then(({rows}) => {
+    // const newArticle = rows[0]
+    // newArticle.comment_count = 0
+    // return newArticle
+    const articleId = rows[0].article_id
+    return db.query(`SELECT articles.*, COUNT(comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`, [articleId])
+    .then(({rows}) => {
+      return rows[0]
+      // Is this necessary? Would comment_count not always be 0 since the article does not exist so the comments with that article id cannot exist either?
+    })
+  })
+}

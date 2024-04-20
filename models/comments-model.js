@@ -22,7 +22,6 @@ exports.removeComment = (commentId) => {
 exports.updateCommentById = (votes, commentId) => {
         return db.query('UPDATE comments SET votes=votes + $1 WHERE comment_id=$2 RETURNING *', [votes, commentId])
         .then(({rows}) => {
-            console.log(rows, 'rows')
             if(rows.length === 0){return Promise.reject({status: 404, msg: '404 - Not Found'})}
             return rows[0]
         })

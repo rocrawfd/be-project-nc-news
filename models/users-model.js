@@ -12,7 +12,6 @@ exports.fetchUserByUsername = (username) => {
   .then(() => {
     return db.query("SELECT * FROM users WHERE username = $1", [username])
       .then(({ rows }) => {
-        console.log(rows[0])
         return rows[0];
       });
   });

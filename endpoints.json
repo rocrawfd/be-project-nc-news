@@ -91,6 +91,30 @@
   "PATCH /api/comments/:comment_id": {
     "description": "changes the votes of the selected comment, using an object on inc_votes",
     "queries": [],
-    "exampleRequest": { "inc_votes": -12 }
+    "exampleRequest": { 
+      "inc_votes": -12 
+    }
+  },
+  "POST /api/articles": {
+    "description": "adds an article to the articles table, and returns the new article",
+    "queries": [],
+    "exampleRequest": {
+      "author": "butter_bridge", 
+      "title": "Dunder Mifflin might go bust",
+      "body": "With the rise of the Michael Scott Paper Company, Dunder Mufflin may be on its last legs. How the turntables...",
+      "topic": "paper",
+      "article_img_url": "https://i.pinimg.com/originals/0e/ea/0e/0eea0ecff537de13628d7a065a535bc9.jpg"
+    },
+    "exampleResponse": {
+        "article_id": 14,
+        "title": "Dunder Mifflin might go bust",
+        "author": "butter_bridge",
+        "topic": "paper",
+        "body": "With the rise of the Michael Scott Paper Company, Dunder Mufflin may be on its last legs. How the turntables...",
+        "created_at": "a string of the date and time created",
+        "article_img_url": "https://i.pinimg.com/originals/0e/ea/0e/0eea0ecff537de13628d7a065a535bc9.jpg",
+        "votes": 0,
+        "comment_count": 0
+    }
   }
 }
