@@ -87,5 +87,10 @@
         "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
       }
     ]
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "changes the votes of the selected comment, using an object on inc_votes",
+    "queries": [],
+    "exampleRequest": { "inc_votes": -12 }
   }
 }
