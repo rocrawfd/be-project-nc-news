@@ -96,7 +96,7 @@
     }
   },
   "POST /api/articles": {
-    "description": "adds an article to the articles table, and returns the new article",
+    "description": "adds an article to the articles table, and returns the new article, with additional features - article_id, votes, comment_count, created_at",
     "queries": [],
     "exampleRequest": {
       "author": "butter_bridge", 
