@@ -1,10 +1,18 @@
 const db = require("../db/connection")
 const { checkExists } = require("../utils")
 
-exports.fetchCommentsByArticleId = (articleId) => {
-    return db.query(`SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`, [articleId])
+exports.fetchCommentsByArticleId = (articleId, limit=10, page) => {
+    let sqlString = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`
+    if(limit){
+        sqlString+=` LIMIT ${limit}`
+    }
+    if(page){
+        sqlString+= ` OFFSET ${page*limit-limit}`
+    }
+    return db.query(sqlString, [articleId])
     .then(( {rows} ) => {
-        return rows
+        if(page>1 && rows.length === 0){return Promise.reject({status: 404, msg: '404 - Not Found'})}
+            return rows
     })
 }
 
