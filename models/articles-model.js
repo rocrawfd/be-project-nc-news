@@ -25,24 +25,46 @@ exports.updateArticle = (votesInc, articleId) => {
 };
 
 
-exports.fetchArticles = (topic, sortBy='created_at', order='desc') => {
+exports.fetchArticles = (topic, sortBy='created_at', order='desc', limit, page) => {
   const queries = [];
   const validSortBys = ['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'article_img_url', 'comment_count']
   const validOrders = ['asc', 'desc', 'ASC', 'DESC']
 
   let sqlString = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, COUNT(comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`;
+  
+  let countQuery = `SELECT COUNT(*)::INT FROM articles` 
+  const countArr = []
+  
   if (topic) {
     sqlString += ` WHERE topic = $1`;
     queries.push(topic);
+    countArr.push(topic)
+    countQuery += ` WHERE topic = $1`
   }
 
   if(!validSortBys.includes(sortBy)){return Promise.reject({status: 404, msg: '404 - Not Found'})}
   if(!validOrders.includes(order)){return Promise.reject({status: 404, msg: '404 - Not Found'})}
 
-  sqlString += ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order};`;
-  return db.query(sqlString, queries)
-  .then(( {rows} ) => {
-    return rows;
+  sqlString += ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order}`;
+  if(limit){
+    sqlString += ` LIMIT ${limit}`
+  }
+  
+  if(page && limit){
+    const offset = (page*limit)-limit
+    sqlString += ` OFFSET ${offset}`
+  }else if(page && !limit){
+    const offset = (page*10)-10
+    sqlString += ` LIMIT 10 OFFSET ${offset}`
+  }
+
+
+  return Promise.all([db.query(sqlString, queries), db.query(countQuery, countArr)])
+  .then(( promises ) => {
+    const {rows} = promises[0]
+    const count = promises[1].rows[0].count
+    if(page>1 && rows.length === 0){return Promise.reject({status: 404, msg: '404 - Not Found'})}
+    return {articles: rows, total_count: count};
   });
 };
 
@@ -51,14 +73,10 @@ exports.insertArticle = (article) => {
   return db.query(`
   INSERT INTO articles (title, author, topic, body, article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING *`, [article.title, article.author, article.topic, article.body, article.article_img_url])
   .then(({rows}) => {
-    // const newArticle = rows[0]
-    // newArticle.comment_count = 0
-    // return newArticle
     const articleId = rows[0].article_id
     return db.query(`SELECT articles.*, COUNT(comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`, [articleId])
     .then(({rows}) => {
       return rows[0]
-      // Is this necessary? Would comment_count not always be 0 since the article does not exist so the comments with that article id cannot exist either?
     })
   })
 }
