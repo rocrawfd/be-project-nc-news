@@ -330,6 +330,50 @@ describe("GET api/articles/:article_id/comments", () => {
         expect(body.comments).toHaveLength(0);
       });
   });
+   test("GET 200 (COM PAGE): should limit articles presented when passed a limit query", () => {
+    return request(app)
+    .get("/api/articles/1/comments?limit=5")
+    .expect(200)
+    .then(({body}) => {
+      const {comments} = body
+      expect(comments).toHaveLength(5)
+    })
+   })
+   test("GET 200(COM PAGE): should allow navigation to pages using p query", () => {
+    return request(app)
+    .get("/api/articles/1/comments?limit=4&&p=2")
+    .expect(200)
+    .then(({body}) => {
+      const {comments} = body
+      expect(comments).toHaveLength(4)
+      expect(comments[0]).toMatchObject({comment_id: 7})
+    })
+   })
+   test("GET 200(COM PAGE): limit should default to 10 when limit is not submitted", () => {
+    return request(app)
+    .get("/api/articles/1/comments?p=2")
+    .expect(200)
+    .then(({body}) => {
+      const {comments} = body
+      expect(comments).toHaveLength(1)
+    })
+   })
+   test("GET 404 (COM PAGE): when attempting to access a valid page that does not exist, should return 404", () => {
+    return request(app)
+    .get("/api/articles/1/comments?limit=10&p=3")
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('404 - Not Found')
+    })
+  })
+  test("GET 400 (COM PAGE): when passed an invalid limit, should return 400", () => {
+    return request(app)
+    .get("/api/articles/1/comments?limit=five")
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe('400 - Bad Request')
+    })
+  })
 });
 
 
