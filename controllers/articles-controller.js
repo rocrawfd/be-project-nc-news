@@ -30,12 +30,14 @@ exports.patchArticle = (req, res, next) => {
       const {topic} = req.query
       const {sort_by} = req.query
       const {order} = req.query
+      const {limit} = req.query
+      const {p} = req.query
       let topicExists = false
       if(topic) { topicExists = checkExists('topics', 'slug', topic) }
-      return Promise.all( [fetchArticles(topic, sort_by, order), topicExists] )
+      return Promise.all( [fetchArticles(topic, sort_by, order, limit, p), topicExists] )
       .then((promises) => {
         const articles = promises[0]
-        res.status(200).send({articles})
+        res.status(200).send(articles)
       })
       .catch((err) => {
         next(err)
@@ -50,7 +52,6 @@ exports.patchArticle = (req, res, next) => {
         res.status(201).send({article})
       })
       .catch((err) => {
-        console.log(err)
         next(err)
       })
     }

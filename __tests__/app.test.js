@@ -29,6 +29,8 @@ describe("GET /api/topics", () => {
   });
 });
 
+
+
 describe("GET /api", () => {
   test("GET 200: responds with an object of all available endpoints", () => {
     return request(app)
@@ -40,6 +42,8 @@ describe("GET /api", () => {
   });
 });
 
+
+
 describe("GET 404: /api/not-a-table", () => {
   test("GET 404: responds with a 404 status code and an error message", () => {
     return request(app)
@@ -50,6 +54,8 @@ describe("GET 404: /api/not-a-table", () => {
       });
   });
 });
+
+
 
 describe("GET /api/articles/:article_id", () => {
   test("GET 200: responds with a 200 status code and the correct article", () => {
@@ -99,6 +105,8 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
+
+
 
 describe("GET api/articles", () => {
   test("GET 200: should respond with a status code of 200 and an array of articles", () => {
@@ -201,7 +209,71 @@ describe("GET api/articles", () => {
         });
       });
   });
-});
+  test("GET 200 (PAGE): should paginate when passed a query of limit", () => {
+    return request(app)
+    .get("/api/articles?limit=5")
+    .expect(200)
+    .then(({body}) => {
+      const {articles} = body
+      expect(articles).toHaveLength(5)
+      expect(articles[0]).toMatchObject({article_id: 3})
+    })
+  })
+  test("GET 200 (PAGE): should paginate, starting at a requested page when passed a p query", () => {
+    return request(app)
+    .get("/api/articles?limit=5&p=2")
+    .expect(200)
+    .then(({body}) => {
+      const {articles} = body
+      expect(articles).toHaveLength(5)
+      expect(articles[0]).toMatchObject({article_id: 5})
+      expect(articles[4]).toMatchObject({article_id: 4})
+  })
+})
+test("GET 404: when attempting to access a valid page that does not exist, should return 404", () => {
+  return request(app)
+  .get("/api/articles?limit=10&p=3")
+  .expect(404)
+  .then(({body}) => {
+    expect(body.msg).toBe('404 - Not Found')
+  })
+})
+test("GET 400: when passed an invalid limit, should return 400", () => {
+  return request(app)
+  .get("/api/articles?limit=five")
+  .expect(400)
+  .then(({body}) => {
+    expect(body.msg).toBe('400 - Bad Request')
+  })
+})
+test("page limit defaults at 10 articles when passed only a page number query", () => {
+  return request(app)
+  .get("/api/articles?p=2")
+  .expect(200)
+  .then(({body}) => {
+    const {articles} = body
+    expect(articles).toHaveLength(3)
+  })
+})
+test("returns the total_count of articles when there is a topic query", () => {
+  return request(app)
+  .get("/api/articles?topic=mitch")
+  .expect(200)
+  .then(({body}) => {
+    expect(body.total_count).toBe(12)
+  })
+})
+test("returns the toal count of articles when there is no topic query", () => {
+  return request(app)
+  .get("/api/articles")
+  .expect(200)
+  .then(({body}) => {
+    expect(body.total_count).toBe(13)
+  })
+})
+})
+
+
 
 describe("GET api/articles/:article_id/comments", () => {
   test("GET 200: should respond with a status code of 200 and an array of comments linked to the requested article", () => {
@@ -259,6 +331,8 @@ describe("GET api/articles/:article_id/comments", () => {
       });
   });
 });
+
+
 
 describe("POST /api/articles/:article_id/comments", () => {
   test("POST 201: should create a new comment linked to the requested article, and respond with an object containing the posted comment", () => {
@@ -333,6 +407,8 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
+
+
 describe("PATCH /api/articles/:article_id", () => {
   test("PATCH 200: should increment the number of votes an article has by the specified amount, and respond with the patched article", () => {
     const voteChanger = { inc_votes: 10 };
@@ -398,6 +474,8 @@ describe("PATCH /api/articles/:article_id", () => {
   });
 });
 
+
+
 describe("DELETE /api/comments/comment_id", () => {
   test("DELETE 204: should respond with a status code of 204", () => {
     return request(app).delete("/api/comments/1").expect(204);
@@ -420,6 +498,8 @@ describe("DELETE /api/comments/comment_id", () => {
   });
 });
 
+
+
 describe("GET /api/users", () => {
   test("GET 200: should return a status code of 200 and respond with an array of users", () => {
     return request(app)
@@ -440,6 +520,8 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+
 
 describe("GET /api/users/:username", () => {
   test("GET 200: should respond with a status code of 200 and an object containing the requested user", () => {
@@ -467,6 +549,8 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+
 
 describe("PATCH /api/comments/:comment_id", () => {
   test("PATCH 200: should return a status code of 200 and respond with an object containing the patched comment", () => {
@@ -531,6 +615,8 @@ describe("PATCH /api/comments/:comment_id", () => {
   })
 });
 
+
+
 describe("POST /api/articles", () => {
   test("POST 201: responds with the updated article and a status code of 201", () => {
     const newArticle = {
@@ -590,4 +676,7 @@ describe("POST /api/articles", () => {
       expect(body.msg).toEqual('400 - Bad Request')
     })
   })
-})
+});
+
+
+
