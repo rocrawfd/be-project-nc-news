@@ -64,7 +64,7 @@ exports.fetchArticles = (topic, sortBy='created_at', order='desc', limit, page) 
     const {rows} = promises[0]
     const count = promises[1].rows[0].count
     if(page>1 && rows.length === 0){return Promise.reject({status: 404, msg: '404 - Not Found'})}
-    return {articles: rows, total_count: count};
+    return {total_count: count, articles: rows};
   });
 };
 
