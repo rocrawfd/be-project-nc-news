@@ -10,6 +10,7 @@ const commentsRouter = require("./routers/comments-router")
 const usersRouter = require("./routers/users-router")
 
 app.use(cors())
+//check
 
 app.use(express.json())
 
