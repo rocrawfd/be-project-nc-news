@@ -116,5 +116,9 @@
         "votes": 0,
         "comment_count": 0
     }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "updates vote count",
+    "exampleRequest": 
   }
 }
